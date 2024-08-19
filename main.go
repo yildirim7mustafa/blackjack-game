@@ -27,26 +27,26 @@ var player, dealer Player
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	// Döngü başlıyor
-	for {
-		initializeGame()
+	initializeGame()
 
-		http.HandleFunc("/", gameHandler)
-		http.HandleFunc("/hit", hitHandler)
-		http.HandleFunc("/stand", standHandler)
+	http.HandleFunc("/", gameHandler)
+	http.HandleFunc("/hit", hitHandler)
+	http.HandleFunc("/stand", standHandler)
+	http.HandleFunc("/reset", resetGameHandler)
 
-		fmt.Println("Server is running on port 8081...")
-		http.ListenAndServe(":8081", nil)
-	}
+	fmt.Println("Server is running on port 8081...")
+	http.ListenAndServe(":8081", nil)
 }
 
 func initializeGame() {
 	deck = createDeck()
 	shuffleDeck()
 
-	player = Player{Name: "Player"}
-	dealer = Player{Name: "Dealer"}
+	// Clear player and dealer cards and reset their scores
+	player = Player{Name: "Player", Cards: []Card{}, Score: 0}
+	dealer = Player{Name: "Dealer", Cards: []Card{}, Score: 0}
 
+	// Deal initial cards
 	player.Cards = append(player.Cards, drawCard(), drawCard())
 	dealer.Cards = append(dealer.Cards, drawCard(), drawCard())
 
@@ -127,7 +127,15 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	gameState += fmt.Sprintf("</ul><p>Score: %d</p>", dealer.Score)
 
-	if r.URL.Path == "/stand" {
+	if r.URL.Path != "/stand" && player.Score <= 21 {
+		gameState += `
+        <form action="/hit" method="post">
+            <button type="submit">Hit</button>
+        </form>
+        <form action="/stand" method="post">
+            <button type="submit">Stand</button>
+        </form>`
+	} else if r.URL.Path == "/stand" || player.Score > 21 {
 		if player.Score > 21 || dealer.Score > 21 || player.Score == dealer.Score {
 			gameState += "<p>It's a tie! Restarting in 10 seconds...</p>"
 		} else if player.Score > dealer.Score {
@@ -138,7 +146,7 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 
 		gameState += `<script>
             setTimeout(function() {
-                window.location.href = "/";
+                window.location.href = "/reset";
             }, 10000);
             </script>`
 	}
@@ -168,4 +176,9 @@ func standHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	gameHandler(w, r)
+}
+
+func resetGameHandler(w http.ResponseWriter, r *http.Request) {
+	initializeGame()
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

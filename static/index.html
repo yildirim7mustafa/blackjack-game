@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+</head>
+<body>
+    <h1>Blackjack Game</h1>
+    <button id="hitButton">Hit</button>
+    <button id="standButton">Stand</button>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("hitButton").addEventListener("click", function() {
+            fetch("/hit")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerText = JSON.stringify(data);
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById("standButton").addEventListener("click", function() {
+            fetch("/stand")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerText = JSON.stringify(data);
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
