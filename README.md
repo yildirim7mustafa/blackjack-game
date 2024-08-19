@@ -33,3 +33,10 @@ Bu proje, Go dilinde bir Blackjack oyunu geliştirmeyi ve onu bir web sunucusu o
    - [ ] Tamamlanmadı
 
 
+## Local Deneme
+
+```bash
+git clone <repo-url>
+cd blackjack-app
+go run main.go
+localhost:8081
