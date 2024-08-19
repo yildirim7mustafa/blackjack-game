@@ -125,7 +125,13 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 			gameState += fmt.Sprintf("<li>%s of %s</li>", card.Value, card.Suit)
 		}
 	}
-	gameState += fmt.Sprintf("</ul><p>Score: %d</p>", dealer.Score)
+
+	// Show dealer's score only if player stands
+	if r.URL.Path == "/stand" {
+		gameState += fmt.Sprintf("</ul><p>Score: %d</p>", dealer.Score)
+	} else {
+		gameState += "</ul><p>Score: Hidden</p>"
+	}
 
 	if r.URL.Path != "/stand" && player.Score <= 21 {
 		gameState += `
