@@ -32,17 +32,4 @@ Bu proje, Go dilinde bir Blackjack oyunu geliştirmeyi ve onu bir web sunucusu o
    Uygulama, Kubernetes üzerinde bir Load Balancer aracılığıyla yayına alınacak. Uygulamanın dış erişime açık olması sağlanacak.  
    - [ ] Tamamlanmadı
 
-## Gereksinimler
 
-- Go 1.20+
-- Docker
-- Kubernetes
-- MongoDB
-
-## Kurulum
-
-```bash
-git clone <repo-url>
-cd blackjack-app
-docker build -t blackjack-app .
-docker run -p 8081:8081 blackjack-app
